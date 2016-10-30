@@ -7,35 +7,24 @@ SCENARIO("UTF8Encoder its used to encode files to UTF-8", "") {
 		UTF8Encoder utf8enc;
 		std::basic_stringstream<char32_t> input;
 		std::basic_stringstream<char> output;
+
 		WHEN("Converting hello") {
-			input.put('h');
-			input.put('e');
-			input.put('l');
-			input.put('l');
-			input.put('o');
+			input << std::basic_string<char32_t> {'h','e','l','l','o'};
 			utf8enc.encode(input, output);
 			THEN("Output is the same") {
-				char c = output.get();
-				REQUIRE(c=='h');
-				c = output.get();
-				REQUIRE(c=='e');
-				c = output.get();
-				REQUIRE(c=='l');
-				c = output.get();
-				REQUIRE(c=='l');
-				c = output.get();
-				REQUIRE(c=='o');
+				std::string actual;
+				output >> actual;
+				REQUIRE(actual=="hello");
 			}
 		}
 
-		WHEN("Converting ñ") {
-			input.put(char32_t(0xf1));
+		WHEN("Converting 0xf1 0xf1 (ññ)") {
+			input << std::basic_string<char32_t> {0xf1, 0xf1};
 			utf8enc.encode(input, output);
-			THEN("Output is 0xc3 0xb1") {
-				char c = output.get();
-				REQUIRE(c=='\xc3');
-				c = output.get();
-				REQUIRE(c=='\xb1');
+			THEN("Output is ññ") {
+				std::string actual;
+				output >> actual;
+				REQUIRE(actual=="\xc3\xb1\xc3\xb1");
 			}
 		}
 	}
