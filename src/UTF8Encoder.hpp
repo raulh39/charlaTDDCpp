@@ -1,6 +1,9 @@
 #ifndef UTF8_ENCODER_HPP_GUARD
 #define UTF8_ENCODER_HPP_GUARD
 
+#include <istream>
+#include <ostream>
+
 class UTF8Encoder
 {
 	public:
@@ -37,6 +40,14 @@ class UTF8Encoder
 			return "";
 		}
 
+		void encode(std::basic_istream<char32_t> &input, std::basic_ostream<char> &output)  {
+			while(input.good()) {
+				char32_t c = input.get();
+				std::string o = encode(c);
+				for(unsigned i=0; i<o.size();++i)
+					output.put(o[i]);
+			}
+		}
 };
 
 #endif //UTF8_ENCODER_HPP_GUARD
